@@ -6,6 +6,9 @@ public class scriptLaser : MonoBehaviour
 {
     LineRenderer line;
 
+    public GameObject fireBall;
+    public GameObject smoke;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,7 +47,21 @@ public class scriptLaser : MonoBehaviour
 
                 if (hit.rigidbody)
                 {
-                    hit.rigidbody.AddForceAtPosition(transform.forward * 100, hit.point);
+                    Collider[] colliders = Physics.OverlapSphere(hit.point, 5);
+                    foreach (Collider collider in colliders)
+                    {
+                        if (collider.GetComponent<Rigidbody>() == null) 
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Instantiate(fireBall, collider.transform.position, Quaternion.identity);
+                            Instantiate(smoke, collider.transform.position, Quaternion.identity);
+                            collider.GetComponent<Rigidbody>().AddExplosionForce(8, hit.point, 10, 0, ForceMode.Impulse);
+                        }
+                        
+                    }
                 }
             }
             else
